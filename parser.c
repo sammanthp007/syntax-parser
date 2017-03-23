@@ -69,10 +69,7 @@ int main(int argc, char* argv[]) {
         printf("ERROR - cannot open front.in \n");
     else {
         while ((read_so_far = getline(&curr_line, &len, in_fp)) != -1) {
-            //curr_read_so_far = '\0';
-            //printf("\n\nhey\n");
             strcpy(curr_read_so_far, "");
-            // curr_read_so_far = NULL;
             col_num = 1;
             printf("\n\n");
             line_num++;
