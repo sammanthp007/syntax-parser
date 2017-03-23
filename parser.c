@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
     char* filename = argv[1];
     /* Open the input data file and process its contents */
     if ((in_fp = fopen(filename, "r")) == NULL)
-        printf("ERROR - cannot open front.in \n");
+        printf("ERROR - cannot open %s\n", filename);
     else {
         while ((read_so_far = getline(&curr_line, &len, in_fp)) != -1) {
             strcpy(curr_read_so_far, "");
