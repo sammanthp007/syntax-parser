@@ -124,6 +124,8 @@ int lookup(char ch) {
             nextToken = EOF;
             break;
     }
+    strcat(curr_read_so_far, lexeme);
+    strcat(curr_read_so_far, " ");
     return
         nextToken;
 }
@@ -133,8 +135,6 @@ void addChar() {
     if (lexLen <= 98) {
         lexeme[lexLen++] = nextChar;
         lexeme[lexLen] = 0;
-        strcat(curr_read_so_far, lexeme);
-        strcat(curr_read_so_far, " ");
     }
     else
         printf("Error - lexeme is too long \n");
@@ -182,6 +182,8 @@ int lex() {
                 addChar();
                 getChar();
             }
+            strcat(curr_read_so_far, lexeme);
+            strcat(curr_read_so_far, " ");
             nextToken = IDENT;
             break;
             /* Parse integer literals */
@@ -192,6 +194,8 @@ int lex() {
                 addChar();
                 getChar();
             }
+            strcat(curr_read_so_far, lexeme);
+            strcat(curr_read_so_far, " ");
             nextToken = INT_LIT;
             break;
             /* Parentheses and operators */
