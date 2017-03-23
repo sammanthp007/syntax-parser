@@ -1,3 +1,4 @@
+
 /* front.c - a lexical analyzer system for simple
    arithmetic expressions */
 #include <stdio.h>
@@ -20,6 +21,7 @@ int lex();
 
 void term();
 void factor();
+void expr();
 /* Character classes */
 #define LETTER 0
 #define DIGIT 1
@@ -46,6 +48,7 @@ int main() {
         getChar();
         do {
             lex();
+            expr();
         } while (nextToken != EOF);
     }
 }
