@@ -1,4 +1,4 @@
-
+/* Done by Samman Bikram Thapa */
 /* front.c - a lexical analyzer system for simple
    arithmetic expressions */
 #include <stdio.h>
@@ -42,9 +42,16 @@ void error();
 
 /******************************************************/
 /* main driver */
-int main() {
+int main(int argc, char* argv[]) {
+    /* Get the file name */
+    if (argc != 2) {
+        printf("Filename not provided.\n ./parser <filename> \n");
+        exit(0);
+    }
+
+    char* filename = argv[1];
     /* Open the input data file and process its contents */
-    if ((in_fp = fopen("front.in", "r")) == NULL)
+    if ((in_fp = fopen(filename, "r")) == NULL)
         printf("ERROR - cannot open front.in \n");
     else {
         getChar();
