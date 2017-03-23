@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
 
 /* Global declarations */
 /* Variables */
@@ -21,7 +22,9 @@ int col_num=1;
 size_t len = 0;
 size_t read_so_far = 0;
 char* curr_line = NULL;
+char curr_read_so_far[1000];
 int currCharIndex;
+char last_read_char;
 
 /* Function declarations */
 void addChar();
@@ -66,6 +69,10 @@ int main(int argc, char* argv[]) {
         printf("ERROR - cannot open front.in \n");
     else {
         while ((read_so_far = getline(&curr_line, &len, in_fp)) != -1) {
+            //curr_read_so_far = '\0';
+            //printf("\n\nhey\n");
+            strcpy(curr_read_so_far, "");
+            // curr_read_so_far = NULL;
             col_num = 1;
             printf("\n\n");
             line_num++;
@@ -129,6 +136,8 @@ void addChar() {
     if (lexLen <= 98) {
         lexeme[lexLen++] = nextChar;
         lexeme[lexLen] = 0;
+        strcat(curr_read_so_far, lexeme);
+        strcat(curr_read_so_far, " ");
     }
     else
         printf("Error - lexeme is too long \n");
@@ -166,6 +175,7 @@ void getNonBlank() {
 int lex() {
     lexLen = 0;
     getNonBlank();
+    last_read_char = nextChar;
     switch (charClass) {
         /* Parse identifiers */
         case LETTER:
@@ -203,6 +213,7 @@ int lex() {
     } /* End of switch */
     printf("Next token is: %d, Next lexeme is %s\n",
             nextToken, lexeme);
+
     return nextToken;
 } /* End of function lex */
 
@@ -276,6 +287,7 @@ void factor() {
 }
 
 void error() {
-    printf("Syntax error in line %d:%d: \n%s\n", line_num, col_num, curr_line);
+    printf("In line %d:%d: %s", line_num, col_num, curr_line);
+    printf("Syntax Error: %s\nError occurs at %c\n", curr_read_so_far, last_read_char);
     exit(0);
 }
