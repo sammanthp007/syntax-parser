@@ -1,7 +1,10 @@
+/* Done by Samman Bikram Thapa */
 /* front.c - a lexical analyzer system for simple
    arithmetic expressions */
 #include <stdio.h>
 #include <ctype.h>
+#include <stdlib.h>
+
 /* Global declarations */
 /* Variables */
 int charClass;
@@ -12,6 +15,14 @@ int token;
 int nextToken;
 FILE *in_fp, *fopen();
 
+/* for error tracking */
+int line_num=0;
+int col_num=1;
+size_t len = 0;
+size_t read_so_far = 0;
+char* curr_line = NULL;
+int currCharIndex;
+
 /* Function declarations */
 void addChar();
 void getChar();
@@ -20,10 +31,14 @@ int lex();
 
 void term();
 void factor();
+void expr();
+void error();
+
 /* Character classes */
 #define LETTER 0
 #define DIGIT 1
 #define UNKNOWN 99
+
 /* Token codes */
 #define INT_LIT 10
 #define IDENT 11
@@ -34,19 +49,35 @@ void factor();
 #define DIV_OP 24
 #define LEFT_PAREN 25
 #define RIGHT_PAREN 26
-
+#define NEW_LINE 33
 
 /******************************************************/
 /* main driver */
-int main() {
+int main(int argc, char* argv[]) {
+    /* Get the file name */
+    if (argc != 2) {
+        printf("Filename not provided.\n ./parser <filename> \n");
+        exit(0);
+    }
+
+    char* filename = argv[1];
     /* Open the input data file and process its contents */
-    if ((in_fp = fopen("front.in", "r")) == NULL)
+    if ((in_fp = fopen(filename, "r")) == NULL)
         printf("ERROR - cannot open front.in \n");
     else {
-        getChar();
-        do {
-            lex();
-        } while (nextToken != EOF);
+        while ((read_so_far = getline(&curr_line, &len, in_fp)) != -1) {
+            col_num = 1;
+            printf("\n\n");
+            line_num++;
+            currCharIndex = 0;
+            getChar();
+            if (curr_line != NULL) {
+                do {
+                    lex();
+                    expr();
+                } while (nextToken != EOF);
+            }
+        }
     }
 }
 /*****************************************************/
@@ -79,6 +110,10 @@ int lookup(char ch) {
             addChar();
             nextToken = DIV_OP;
             break;
+        case '\n':
+            addChar();
+            nextToken = NEW_LINE;
+            break;
 
         default:
             addChar();
@@ -102,7 +137,9 @@ void addChar() {
 /* getChar - a function to get the next character of
    input and determine its character class */
 void getChar() {
-    if ((nextChar = getc(in_fp)) != EOF) {
+    if (curr_line[currCharIndex] != '\n' && curr_line[currCharIndex] != '\0') {
+        col_num++;
+        nextChar = curr_line[currCharIndex++];
         if (isalpha(nextChar))
             charClass = LETTER;
         else if (isdigit(nextChar))
@@ -225,17 +262,20 @@ void factor() {
                 lex();
             }
             else {
-                printf("error()");
+                error();
             }
         } /* End of if (nextToken == ... */
         /* It was not an id, an integer literal, or a left
            parenthesis */
         else {
-            printf("error()");
+            error();
         }
-        /* error(); */
     } /* End of else */
     printf("Exit <factor>\n");;
     /* End of function factor */
+}
 
+void error() {
+    printf("Syntax error in line %d:%d: \n%s\n", line_num, col_num, curr_line);
+    exit(0);
 }
