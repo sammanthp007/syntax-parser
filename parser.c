@@ -25,6 +25,7 @@ char* curr_line = NULL;
 char curr_read_so_far[1000];
 int currCharIndex;
 char last_read_char;
+int to_break=0;
 
 /* Function declarations */
 void addChar();
@@ -74,11 +75,15 @@ int main(int argc, char* argv[]) {
             printf("\n\n");
             line_num++;
             currCharIndex = 0;
+            to_break = 0;
             getChar();
             if (curr_line != NULL) {
                 do {
                     lex();
                     expr();
+                    if (to_break == 1) {
+                        break;
+                    }
                 } while (nextToken != EOF);
             }
         }
@@ -226,11 +231,17 @@ void expr() {
     printf("Enter <expr>\n");
     /* Parse the first term */
     term();
+    if (to_break == 1) {
+        return;
+    }
     /* As long as the next token is + or -, get
        the next token and parse the next term */
     while (nextToken == ADD_OP || nextToken == SUB_OP) {
         lex();
         term();
+        if (to_break == 1) {
+            return;
+        }
     }
     printf("Exit <expr>\n");
 } /* End of function expr */
@@ -243,11 +254,17 @@ void term() {
     printf("Enter <term>\n");
     /* Parse the first factor */
     factor();
+    if (to_break == 1) {
+        return;
+    }
     /* As long as the next token is * or /, get the
        next token and parse the next factor */
     while (nextToken == MULT_OP || nextToken == DIV_OP) {
         lex();
         factor();
+        if (to_break == 1) {
+            return;
+        }
     }
     printf("Exit <term>\n");
 } /* End of function term */
@@ -275,12 +292,14 @@ void factor() {
             }
             else {
                 error();
+                return;
             }
         } /* End of if (nextToken == ... */
         /* It was not an id, an integer literal, or a left
            parenthesis */
         else {
             error();
+            return;
         }
     } /* End of else */
     printf("Exit <factor>\n");;
@@ -290,5 +309,6 @@ void factor() {
 void error() {
     printf("In line %d:%d: %s", line_num, col_num, curr_line);
     printf("Syntax Error: %s\nError occurs at %c\n", curr_read_so_far, last_read_char);
-    exit(0);
+    // exit(0);
+    to_break = 1;
 }

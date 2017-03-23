@@ -1,5 +1,5 @@
 (sum + 47) / total
-a + b
-a + b - c
 (pickachu - 47) /*^%/ difference
+a +* b
+a + b - c d
 (ZZZu - 47) / difference
