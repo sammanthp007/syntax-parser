@@ -17,11 +17,11 @@ FILE *in_fp, *fopen();
 
 /* for error tracking */
 int line_num=0;
-int col_num=0;
+int col_num=1;
 size_t len = 0;
 size_t read_so_far = 0;
 char* curr_line = NULL;
-int curr_char;
+int currCharIndex;
 
 /* Function declarations */
 void addChar();
@@ -49,7 +49,7 @@ void error();
 #define DIV_OP 24
 #define LEFT_PAREN 25
 #define RIGHT_PAREN 26
-
+#define NEW_LINE 33
 
 /******************************************************/
 /* main driver */
@@ -65,9 +65,10 @@ int main(int argc, char* argv[]) {
     if ((in_fp = fopen(filename, "r")) == NULL)
         printf("ERROR - cannot open front.in \n");
     else {
-        while ((read_so_far = getline(&curr_line, &len, in_fp)) != 1) {
+        while ((read_so_far = getline(&curr_line, &len, in_fp)) != -1) {
             printf("\n\n");
-            curr_char = 0;
+            line_num++;
+            currCharIndex = 0;
             getChar();
             if (curr_line != NULL) {
                 do {
@@ -108,6 +109,10 @@ int lookup(char ch) {
             addChar();
             nextToken = DIV_OP;
             break;
+        case '\n':
+            addChar();
+            nextToken = NEW_LINE;
+            break;
 
         default:
             addChar();
@@ -131,7 +136,9 @@ void addChar() {
 /* getChar - a function to get the next character of
    input and determine its character class */
 void getChar() {
-    if ((nextChar = getc(in_fp)) != EOF) {
+    if (curr_line[currCharIndex] != '\n' && curr_line[currCharIndex] != '\0') {
+        col_num++;
+        nextChar = curr_line[currCharIndex++];
         if (isalpha(nextChar))
             charClass = LETTER;
         else if (isdigit(nextChar))
@@ -268,6 +275,6 @@ void factor() {
 }
 
 void error() {
-    printf("Syntax error in line %s\n", curr_line);
+    printf("Syntax error in line %d:%d: \n%s\n", line_num, col_num, curr_line);
     exit(0);
 }
