@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
+
 /* Global declarations */
 /* Variables */
 int charClass;
@@ -13,6 +14,14 @@ int lexLen;
 int token;
 int nextToken;
 FILE *in_fp, *fopen();
+
+/* for error tracking */
+int line_num=0;
+int col_num=0;
+size_t len = 0;
+size_t read_so_far = 0;
+char* curr_line = NULL;
+int curr_char;
 
 /* Function declarations */
 void addChar();
@@ -24,10 +33,12 @@ void term();
 void factor();
 void expr();
 void error();
+
 /* Character classes */
 #define LETTER 0
 #define DIGIT 1
 #define UNKNOWN 99
+
 /* Token codes */
 #define INT_LIT 10
 #define IDENT 11
@@ -54,11 +65,17 @@ int main(int argc, char* argv[]) {
     if ((in_fp = fopen(filename, "r")) == NULL)
         printf("ERROR - cannot open front.in \n");
     else {
-        getChar();
-        do {
-            lex();
-            expr();
-        } while (nextToken != EOF);
+        while ((read_so_far = getline(&curr_line, &len, in_fp)) != 1) {
+            printf("\n\n");
+            curr_char = 0;
+            getChar();
+            if (curr_line != NULL) {
+                do {
+                    lex();
+                    expr();
+                } while (nextToken != EOF);
+            }
+        }
     }
 }
 /*****************************************************/
@@ -243,7 +260,7 @@ void factor() {
         /* It was not an id, an integer literal, or a left
            parenthesis */
         else {
-             error();
+            error();
         }
     } /* End of else */
     printf("Exit <factor>\n");;
@@ -251,6 +268,6 @@ void factor() {
 }
 
 void error() {
-    printf("Syntax error");
+    printf("Syntax error in line %s\n", curr_line);
     exit(0);
 }
