@@ -3,6 +3,7 @@
    arithmetic expressions */
 #include <stdio.h>
 #include <ctype.h>
+#include <stdlib.h>
 /* Global declarations */
 /* Variables */
 int charClass;
@@ -22,6 +23,7 @@ int lex();
 void term();
 void factor();
 void expr();
+void error();
 /* Character classes */
 #define LETTER 0
 #define DIGIT 1
@@ -228,17 +230,20 @@ void factor() {
                 lex();
             }
             else {
-                printf("error()");
+                error();
             }
         } /* End of if (nextToken == ... */
         /* It was not an id, an integer literal, or a left
            parenthesis */
         else {
-            printf("error()");
+             error();
         }
-        /* error(); */
     } /* End of else */
     printf("Exit <factor>\n");;
     /* End of function factor */
+}
 
+void error() {
+    printf("Syntax error");
+    exit(0);
 }
