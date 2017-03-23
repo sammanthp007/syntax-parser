@@ -1,2 +1,3 @@
 (sum + 47) / total
 (pickachu - 47) / difference
+(ZZZu -- 47) / difference

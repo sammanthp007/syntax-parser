@@ -66,6 +66,7 @@ int main(int argc, char* argv[]) {
         printf("ERROR - cannot open front.in \n");
     else {
         while ((read_so_far = getline(&curr_line, &len, in_fp)) != -1) {
+            col_num = 1;
             printf("\n\n");
             line_num++;
             currCharIndex = 0;
