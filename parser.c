@@ -184,7 +184,6 @@ void getNonBlank() {
 int lex() {
     lexLen = 0;
     getNonBlank();
-    strcpy(last_read_lexem, lexeme);
     last_read_char = nextChar;
     switch (charClass) {
         /* Parse identifiers */
@@ -213,6 +212,7 @@ int lex() {
                 getChar();
             }
             /* to handle errors */
+            strcpy(last_read_lexem, lexeme);
             strcat(curr_read_so_far, lexeme);
             strcat(curr_read_so_far, " ");
             nextToken = INT_LIT;
@@ -325,6 +325,5 @@ void factor() {
 void error() {
     printf("In line %d:%d: %s", line_num, col_num, curr_line);
     printf("Syntax Error: %s\nError occurs at %s\n", curr_read_so_far, last_read_lexem);
-    // exit(0);
     to_break = 1;
 }
