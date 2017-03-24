@@ -71,6 +71,12 @@ int main(int argc, char* argv[]) {
         printf("ERROR - cannot open %s\n", filename);
     else {
         while ((read_so_far = getline(&curr_line, &len, in_fp)) != -1) {
+            /* for handling empty lines */
+            if (read_so_far - 1 == 0) {
+                printf("\nEmpty Line\n");
+                continue;
+            }
+
             strcpy(curr_read_so_far, "");
             strcpy(last_read_lexem, "");
             col_num = 1;
