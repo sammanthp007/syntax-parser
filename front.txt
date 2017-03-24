@@ -3,3 +3,4 @@
 a +* b
 a + b - c d
 (ZZZu - 47) / difference
+(sum + 47) / total total

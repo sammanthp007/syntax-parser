@@ -26,6 +26,7 @@ char curr_read_so_far[1000];
 int currCharIndex;
 char last_read_char;
 int to_break=0;
+char last_read_lexem[1000];
 
 /* Function declarations */
 void addChar();
@@ -71,6 +72,7 @@ int main(int argc, char* argv[]) {
     else {
         while ((read_so_far = getline(&curr_line, &len, in_fp)) != -1) {
             strcpy(curr_read_so_far, "");
+            strcpy(last_read_lexem, "");
             col_num = 1;
             printf("\n\n");
             line_num++;
@@ -178,6 +180,7 @@ int lex() {
     lexLen = 0;
     getNonBlank();
     last_read_char = nextChar;
+    strcpy(last_read_lexem, lexeme);
     switch (charClass) {
         /* Parse identifiers */
         case LETTER:
@@ -308,7 +311,7 @@ void factor() {
 
 void error() {
     printf("In line %d:%d: %s", line_num, col_num, curr_line);
-    printf("Syntax Error: %s\nError occurs at %c\n", curr_read_so_far, last_read_char);
+    printf("Syntax Error: %s\nError occurs at %s\n", curr_read_so_far, last_read_lexem);
     // exit(0);
     to_break = 1;
 }
