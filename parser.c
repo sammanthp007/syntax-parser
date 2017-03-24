@@ -78,7 +78,6 @@ int main(int argc, char* argv[]) {
             }
 
             strcpy(curr_read_so_far, "");
-            strcpy(last_read_lexem, "");
             col_num = 1;
             printf("\n\n");
             line_num++;
@@ -185,17 +184,22 @@ void getNonBlank() {
 int lex() {
     lexLen = 0;
     getNonBlank();
-    last_read_char = nextChar;
     strcpy(last_read_lexem, lexeme);
+    last_read_char = nextChar;
     switch (charClass) {
         /* Parse identifiers */
         case LETTER:
+            /* add the word to lexeme too */
             addChar();
+
+            /* update the value of nextChar and CharClass*/
             getChar();
             while (charClass == LETTER || charClass == DIGIT) {
                 addChar();
                 getChar();
             }
+            /* to handle errors */
+            strcpy(last_read_lexem, lexeme);
             strcat(curr_read_so_far, lexeme);
             strcat(curr_read_so_far, " ");
             nextToken = IDENT;
@@ -208,6 +212,7 @@ int lex() {
                 addChar();
                 getChar();
             }
+            /* to handle errors */
             strcat(curr_read_so_far, lexeme);
             strcat(curr_read_so_far, " ");
             nextToken = INT_LIT;
@@ -216,6 +221,8 @@ int lex() {
         case UNKNOWN:
             lookup(nextChar);
             getChar();
+            /* update last read for error handling */
+            strcpy(last_read_lexem, lexeme);
             break;
             /* EOF */
         case EOF:
